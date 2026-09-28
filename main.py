@@ -3,12 +3,24 @@ from fastapi import FastAPI, Request, status, HTTPException, Depends
 from sqlmodel import Field as SQLField, SQLModel, create_engine, Session, Relationship, select
 from typing import Annotated
 from contextlib import asynccontextmanager
+from pwdlib import PasswordHash
+
+
+#PASSWORD HASHING
+password_hash=PasswordHash.recommended()
+
+def hash_password(password:str)->str:
+    return password_hash.hash(password)
+
+def verify_password(plain_password:str, hashed_password:str)->bool:
+    return password_hash.verify(plain_password, hashed_password)
 
 #DATABASE MODELS
 class User(SQLModel, table=True):
     id:int | None =SQLField(default=None, primary_key=True)
     username: str
     tasks:list["Task"] =Relationship(back_populates="owner")
+    hashed_password:str
 
 class Task(SQLModel, table=True):
     id:int | None =SQLField(default=None, primary_key=True)
@@ -20,6 +32,7 @@ class Task(SQLModel, table=True):
 #SQL Model Validations
 class UserCreate(SQLModel):
     username: str
+    password:str
 class UserPublic(SQLModel):
     id:int
     username:str
@@ -109,7 +122,11 @@ def home():
 
 @app.post("/users", response_model=UserPublic, status_code=status.HTTP_201_CREATED)
 def create_user(session:SessionDep, user:UserCreate):
-    new_user=User.model_validate(user)
+    hashed=hash_password(user.password)
+    new_user=User(
+        username=user.username,
+        hashed_password=hashed
+    )
     session.add(new_user)
     session.commit()
     session.refresh(new_user)
