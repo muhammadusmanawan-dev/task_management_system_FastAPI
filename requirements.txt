@@ -1,0 +1,11 @@
+# Core Web Framework & Server
+fastapi
+uvicorn
+
+# Database ORM
+sqlmodel
+
+# Authentication & Security
+pwdlib[argon2]
+pyjwt
+python-multipart
