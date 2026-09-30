@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from fastapi import (
     APIRouter,
     Depends,
@@ -25,7 +27,9 @@ router = APIRouter(
 )
 
 
-@router.post("",response_model=TaskPublic,
+@router.post(
+    "",
+    response_model=TaskPublic,
     status_code=status.HTTP_201_CREATED
 )
 async def create_task(
@@ -40,28 +44,37 @@ async def create_task(
     )
 
 
-@router.get("",response_model=list[TaskPublic])
+@router.get(
+    "",
+    response_model=list[TaskPublic]
+)
 async def all_tasks(
     session: SessionDep,
+    current_user=Depends(current_active_user),
     completed: bool | None = None,
     limit: int | None = None
 ):
     return await service.get_tasks(
         session,
+        current_user.id,
         completed,
         limit
     )
 
 
-@router.get("/{task_id}", response_model=TaskPublic
+@router.get(
+    "/{task_id}",
+    response_model=TaskPublic
 )
 async def single_task(
     session: SessionDep,
-    task_id: int
+    task_id: UUID,
+    current_user=Depends(current_active_user)
 ):
     task = await service.get_task(
         session,
-        task_id
+        task_id,
+        current_user.id
     )
 
     if not task:
@@ -73,15 +86,21 @@ async def single_task(
     return task
 
 
-@router.patch("/{task_id}",response_model=TaskPublic,status_code=status.HTTP_200_OK)
+@router.patch(
+    "/{task_id}",
+    response_model=TaskPublic,
+    status_code=status.HTTP_200_OK
+)
 async def update_task(
     session: SessionDep,
-    task_id: int,
-    task_update: TaskUpdate
+    task_id: UUID,
+    task_update: TaskUpdate,
+    current_user=Depends(current_active_user)
 ):
     task = await service.get_task(
         session,
-        task_id
+        task_id,
+        current_user.id
     )
 
     if not task:
@@ -97,14 +116,18 @@ async def update_task(
     )
 
 
-@router.delete("/{task_id}")
+@router.delete(
+    "/{task_id}"
+)
 async def delete_task(
     session: SessionDep,
-    task_id: int
+    task_id: UUID,
+    current_user=Depends(current_active_user)
 ):
     task = await service.get_task(
         session,
-        task_id
+        task_id,
+        current_user.id
     )
 
     if not task:
