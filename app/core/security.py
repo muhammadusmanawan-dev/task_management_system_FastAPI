@@ -5,11 +5,8 @@ from fastapi_users.authentication import (
 )
 
 from fastapi_users import FastAPIUsers
-
-from app.core.config import SECRET
-
+from app.core.config import settings
 from app.users.service import get_user_manager
-
 
 bearer_transport = BearerTransport(
     tokenUrl="auth/login"
@@ -17,7 +14,7 @@ bearer_transport = BearerTransport(
 
 def get_jwt_strategy():
     return JWTStrategy(
-        secret=SECRET,
+        secret=settings.SECRET,
         lifetime_seconds=3600
     )
 

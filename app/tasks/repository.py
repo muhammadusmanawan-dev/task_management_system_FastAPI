@@ -1,9 +1,6 @@
 from uuid import UUID
-
 from sqlmodel import select
-
 from app.tasks.models import Task
-
 
 async def create_task(
     session,
@@ -35,7 +32,6 @@ async def get_tasks(
 
     result = await session.execute(statement)
     return result.scalars().all()
-
 
 async def get_task(
     session,

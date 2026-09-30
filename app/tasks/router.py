@@ -26,7 +26,6 @@ router = APIRouter(
     tags=["tasks"]
 )
 
-
 @router.post(
     "",
     response_model=TaskPublic,
@@ -84,7 +83,6 @@ async def single_task(
         )
 
     return task
-
 
 @router.patch(
     "/{task_id}",

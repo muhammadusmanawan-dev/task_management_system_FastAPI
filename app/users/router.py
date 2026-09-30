@@ -7,7 +7,6 @@ from app.core.security import (
     current_active_user,
 )
 
-
 router = APIRouter(
     prefix="/auth",
     tags=["auth"]
