@@ -1,7 +1,11 @@
-from fastapi import APIRouter
-
-from app.core.security import fastapi_users, auth_backend
+from fastapi import APIRouter, Depends
 from app.users.schemas import UserRead, UserCreate
+from app.users.models import User
+from app.core.security import (
+    fastapi_users,
+    auth_backend,
+    current_active_user,
+)
 
 
 router = APIRouter(
@@ -21,3 +25,9 @@ router.include_router(
         UserCreate
     )
 )
+
+@router.get("/me")
+async def get_me(
+    current_user: User = Depends(current_active_user)
+):
+    return current_user

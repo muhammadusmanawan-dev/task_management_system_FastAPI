@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from app.tasks.models import Task
 from app.tasks import repository
 
@@ -18,27 +20,29 @@ async def create_task(
         new_task
     )
 
-
 async def get_tasks(
     session,
+    user_id: UUID,
     completed=None,
     limit=None
 ):
     return await repository.get_tasks(
         session,
+        user_id,
         completed,
         limit
     )
 
 async def get_task(
     session,
-    task_id: int
+    task_id: UUID,
+    user_id: UUID
 ):
     return await repository.get_task(
         session,
-        task_id
+        task_id,
+        user_id
     )
-
 
 async def update_task(
     session,
@@ -54,7 +58,6 @@ async def update_task(
         task,
         update_data
     )
-
 
 async def delete_task(
     session,

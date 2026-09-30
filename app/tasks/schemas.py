@@ -4,7 +4,7 @@ class TaskCreate(SQLModel):
     title:str
     completed:bool =False
 class TaskPublic(SQLModel):
-    id: int
+    id: UUID
     title: str
     completed: bool
     owner_id: UUID
