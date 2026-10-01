@@ -1,5 +1,5 @@
 from uuid import UUID
-
+from app.core.exceptions import TaskNotFoundException
 from app.tasks.models import Task
 from app.tasks import repository
 
@@ -38,11 +38,16 @@ async def get_task(
     task_id: UUID,
     user_id: UUID
 ):
-    return await repository.get_task(
+    task=await repository.get_task(
         session,
         task_id,
         user_id
     )
+
+    if task is None:
+        raise TaskNotFoundException()
+
+    return task
 
 async def update_task(
     session,
